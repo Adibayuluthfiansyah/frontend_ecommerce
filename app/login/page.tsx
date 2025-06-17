@@ -27,7 +27,7 @@ export default function LoginPage() {
         // Redirect ke dashboard
         toast.success("Login berhasil!");
         setTimeout(() => {
-          router.push("/dashboard");
+          router.push("/dashboard-full");
         }, 1000); // 1 detik delay
       } else {
         toast.error("Login gagal: token tidak diterima");

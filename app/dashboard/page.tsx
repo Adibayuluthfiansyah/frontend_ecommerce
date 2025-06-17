@@ -7,7 +7,7 @@ import { logout } from "@/lib/api";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<{ name: string; email: string } | null>(
+  const [user, setUser] = useState<{ name: string; email: string; id: string; } | null>(
     null
   );
 
@@ -27,7 +27,7 @@ export default function DashboardPage() {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     } else {
-      setUser({ name: "Asrul Abdullah", email: "asrul@example.com" }); // fallback
+      setUser({ name: "Asrul Abdullah", email: "asrul@example.com", id:"xxxx"}); // fallback
     }
   }, []);
 
@@ -60,6 +60,7 @@ export default function DashboardPage() {
           <p>
             <strong>Email:</strong> {user.email}
           </p>
+          <p><strong>ID User:</strong>{user.id}</p>
         </div>
       )}
 
