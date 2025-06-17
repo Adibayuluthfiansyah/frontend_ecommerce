@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { logout } from "@/lib/api";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -30,11 +31,21 @@ export default function DashboardPage() {
     }
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    toast("Berhasil logout");
-    router.push("/login");
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await logout(token); // panggil API untuk hapus token dari server
+      toast.error("Logout berhasil");
+      setTimeout(() => {
+        router.push("/login");
+      }, 1000);
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+    } catch (err) {
+      toast.error("Gagal logout");
+    }
   };
 
   return (
