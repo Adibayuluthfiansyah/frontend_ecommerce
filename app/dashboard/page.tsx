@@ -13,6 +13,7 @@ export default function DashboardPage() {
   useEffect(() => {
     // Ambil token dari localStorage (atau bisa juga pakai cookies/session)
     const token = localStorage.getItem("token");
+    console.log(token);
 
     if (!token) {
       toast.error("Anda belum login!");

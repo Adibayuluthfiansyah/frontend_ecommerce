@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { login } from "@/lib/api";
 import { toast } from "sonner";
 
-
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -26,9 +25,10 @@ export default function LoginPage() {
         localStorage.setItem("user", JSON.stringify(res.user));
 
         // Redirect ke dashboard
-        router.push("/dashboard");
-
         toast.success("Login berhasil!");
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 1000); // 1 detik delay
       } else {
         toast.error("Login gagal: token tidak diterima");
       }
@@ -76,4 +76,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
