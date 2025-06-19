@@ -27,19 +27,28 @@ const ProductList: React.FC = () => {
       image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop",
       description: "High-quality wireless headphones dengan noise cancellation",
       features: ["Bluetooth 5.0", "Active Noise Cancellation", "30 Hours Battery"],
-    }
+    },
 
-    // {
-    //     Tambahkan untuk produk baru:
-    //    id: 2,
-    //    name: "Nama Produk Baru",
-    //    price: "Rp 150.000",
-    //    originalPrice: "Rp 200.000", 
-    //    image: "URL_GAMBAR_ANDA",
-    //    description: "Deskripsi produk",
-    //   features: ["Feature 1", "Feature 2", "Feature 3"],
-    //    discount: "25%" 
-    //  }
+     {
+         //Tambahkan untuk produk baru:
+        id: 2,
+        name: "Laptop",
+        price: "Rp 1.500000",
+        originalPrice: "Rp 2.000000", 
+        image: "https://images.unsplash.com/photo-1530893609608-32a9af3aa95c?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        description: "Deskripsi produk",
+       features: ["Feature 1", "Feature 2", "Feature 3"], 
+      },
+           {
+         //Tambahkan untuk produk baru:
+        id: 3,
+        name: "Airpods",
+        price: "Rp 1.500000",
+        originalPrice: "Rp 2.000000", 
+        image: "https://images.unsplash.com/photo-1603351154351-5e2d0600bb77?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        description: "Deskripsi produk",
+       features: ["Feature 1", "Feature 2", "Feature 3"], 
+      }
   ];
 
   return (
@@ -64,7 +73,7 @@ const ProductList: React.FC = () => {
 // Component Kartu Produk - Simple & Reusable with TypeScript
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow p-5">
       {/* Product Image */}
       <div className="relative">
         <img 
