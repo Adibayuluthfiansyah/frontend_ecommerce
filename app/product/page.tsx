@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShoppingCart, Heart, Star } from 'lucide-react';
-
+import Header from '@/components/header/header';
 
 interface Product {
   id: number;
@@ -33,10 +33,10 @@ const ProductList: React.FC = () => {
          //Tambahkan untuk produk baru:
         id: 2,
         name: "Laptop",
-        price: "Rp 1.500000",
-        originalPrice: "Rp 2.000000", 
+        price: "Rp 1.500.000",
+        originalPrice: "Rp 2.000.0000", 
         image: "https://images.unsplash.com/photo-1530893609608-32a9af3aa95c?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        description: "Deskripsi produk",
+        description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. In, atque!" ,
        features: ["Feature 1", "Feature 2", "Feature 3"], 
       },
            {
@@ -46,15 +46,17 @@ const ProductList: React.FC = () => {
         price: "Rp 1.500000",
         originalPrice: "Rp 2.000000", 
         image: "https://images.unsplash.com/photo-1603351154351-5e2d0600bb77?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        description: "Deskripsi produk",
+        description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. In, atque!",
        features: ["Feature 1", "Feature 2", "Feature 3"], 
       }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      {/* Header - Simple */}
-      <div className="text-center mb-8">
+
+    <div className="min-h-screen bg-gray-50 ">
+      {/* Header - Simple */}      
+      <Header/>
+      <div className="text-center pt-8 mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Product List</h1>
         <p className="text-gray-600">Temukan produk terbaik untuk kebutuhan Anda</p>
       </div>
@@ -88,7 +90,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
         )}
         {/* Heart Button */}
-        <button className="absolute top-2 right-2 bg-white p-2 rounded-full hover:bg-gray-100">
+        <button className="absolute top-2 right-2 bg-white p-2 rounded-full hover:bg-gray-100 hover:cursor-pointer">
           <Heart className="w-4 h-4" />
         </button>
       </div>
