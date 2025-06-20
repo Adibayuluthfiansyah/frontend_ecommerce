@@ -32,9 +32,9 @@ const ProductList: React.FC = () => {
      {
          //Tambahkan untuk produk baru:
         id: 2,
-        name: "Laptop",
-        price: "Rp 1.500.000",
-        originalPrice: "Rp 2.000.0000", 
+        name: "Macbook",
+        price: "Rp 11.500.000",
+        originalPrice: "Rp 14.000.0000", 
         image: "https://images.unsplash.com/photo-1530893609608-32a9af3aa95c?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. In, atque!" ,
        features: ["Feature 1", "Feature 2", "Feature 3"], 
@@ -43,8 +43,8 @@ const ProductList: React.FC = () => {
          //Tambahkan untuk produk baru:
         id: 3,
         name: "Airpods",
-        price: "Rp 1.500000",
-        originalPrice: "Rp 2.000000", 
+        price: "Rp 2.700.000",
+        originalPrice: "Rp 3.200.0000", 
         image: "https://images.unsplash.com/photo-1603351154351-5e2d0600bb77?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. In, atque!",
        features: ["Feature 1", "Feature 2", "Feature 3"], 
