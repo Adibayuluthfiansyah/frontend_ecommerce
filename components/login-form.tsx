@@ -61,7 +61,7 @@ export function LoginForm({
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
           <CardDescription>
-            Login with your Apple or Google account
+            Login with your user and password given
           </CardDescription>
         </CardHeader>
         <CardContent>

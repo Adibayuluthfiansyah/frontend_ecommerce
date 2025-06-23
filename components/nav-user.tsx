@@ -45,7 +45,7 @@ export function NavUser() {
 
     if (!token) {
       toast.error("Anda belum login!");
-      router.push("/login");
+      router.push("/login-new");
       return;
     }
 
@@ -68,7 +68,7 @@ export function NavUser() {
       await logout(token); // panggil API untuk hapus token dari server
       toast.error("Logout berhasil");
       setTimeout(() => {
-        router.push("/login");
+        router.push("/login-new");
       }, 1000);
       localStorage.removeItem("token");
       localStorage.removeItem("user");
