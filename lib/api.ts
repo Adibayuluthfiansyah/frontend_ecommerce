@@ -51,15 +51,25 @@ export async function createUser(data: { name: string, email: string, password: 
   return res.json()
 }
 
-export async function updateUser(id: number, data: any) {
+export async function updateUser(id: string, data: any) {
+  const token = getToken()
+  if (!token) throw new Error("Token tidak ditemukan")
+
   const res = await fetch(`${BASE_URL}/user/${id}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${getToken()}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   })
+
+  if (!res.ok) {
+    const errText = await res.text()
+    console.error("Gagal update:", errText)
+    throw new Error("Update gagal: " + errText)
+  }
+
   return res.json()
 }
 

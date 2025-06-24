@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button"
 import { useState } from "react"
 
 interface User {
-  id?: number
+  id?: string
   name: string
   email: string
   password?: string
@@ -31,8 +31,9 @@ export default function UserFormModal({ user, trigger, onSubmit }: Props) {
   const [form, setForm] = useState<User>({
     name: user?.name || "",
     email: user?.email || "",
-    password: "",
+    password: user?.email || "",
     username: user?.username || "",
+    id: user?.id || "",
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
