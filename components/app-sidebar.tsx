@@ -42,7 +42,7 @@ const data = {
   navMain: [
         {
       title: "User",
-      url: "#",
+      url: "/dashboard-full/user",
       icon: IconUsers,
     },
     {
