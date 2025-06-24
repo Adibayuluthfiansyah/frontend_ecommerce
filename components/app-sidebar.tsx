@@ -47,7 +47,7 @@ const data = {
     },
     {
       title: "Customer",
-      url: "#",
+      url: "/dashboard-full/customer",
       icon: IconCamera,
     },
     

@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { login } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 export function LoginForm({
   className,
@@ -24,6 +25,8 @@ export function LoginForm({
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,6 +79,7 @@ export function LoginForm({
                     placeholder="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
+                     autoFocus // 👉 ini yang penting
                     required
                   />
                 </div>
@@ -89,13 +93,22 @@ export function LoginForm({
                       Forgot your password?
                     </a>
                   </div>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="password"
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="password"
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="pr-10" // beri ruang untuk icon di kanan
+                    />
+                    <div
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </div>
+                  </div>
                 </div>
                 <Button type="submit" className="w-full">
                   Login
