@@ -40,21 +40,31 @@ const data = {
     avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
-    {
-      title: "Dashboard",
+        {
+      title: "User",
       url: "#",
-      icon: IconDashboard,
+      icon: IconUsers,
+    },
+    {
+      title: "Customer",
+      url: "#",
+      icon: IconCamera,
     },
     
     {
-      title: "Projects",
+      title: "Barang",
       url: "#",
       icon: IconFolder,
     },
     {
-      title: "Team",
+      title: "Persediaan",
       url: "#",
-      icon: IconUsers,
+      icon: IconReport,
+    },
+    {
+      title: "Pemesanan",
+      url: "#",
+      icon: IconChartBar,
     },
   ],
   navClouds: [
@@ -139,7 +149,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <a href="#">
                 <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">PT Biawak Tbk</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -147,7 +157,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
+        {/* <NavDocuments items={data.documents} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
