@@ -33,6 +33,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
+
+
 const data = {
   user: {
     name: "shadcn",
@@ -40,21 +42,31 @@ const data = {
     avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
+        {
+      title: "User",
+      url: "/dashboard-full/user",
+      icon: IconUsers,
+    },
     {
-      title: "Dashboard",
-      url: "#",
-      icon: IconDashboard,
+      title: "Customer",
+      url: "/dashboard-full/customer",
+      icon: IconCamera,
     },
     
     {
-      title: "Projects",
-      url: "#",
+      title: "Barang",
+      url: "/dashboard-full/barang",
       icon: IconFolder,
     },
     {
-      title: "Team",
+      title: "Persediaan",
       url: "#",
-      icon: IconUsers,
+      icon: IconReport,
+    },
+    {
+      title: "Pemesanan",
+      url: "#",
+      icon: IconChartBar,
     },
   ],
   navClouds: [
@@ -139,7 +151,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <a href="#">
                 <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">PT Biawak Tbk</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -147,11 +159,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
+        {/* <NavDocuments items={data.documents} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser  />
       </SidebarFooter>
     </Sidebar>
   )

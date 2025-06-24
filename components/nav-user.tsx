@@ -28,16 +28,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { logout } from "@/lib/api";
 
-interface NavUserProps {
-  user?: {
-    name: string;
-    email: string;
-    avatar?: string;
-    id?: string;
-  };
-}
-
-export function NavUser({ user: propUser }: NavUserProps) {
+export function NavUser() {
   const { isMobile } = useSidebar();
   const router = useRouter();
   const [user, setUser] = useState<{
@@ -48,24 +39,13 @@ export function NavUser({ user: propUser }: NavUserProps) {
   } | null>(null);
 
   useEffect(() => {
-    // Jika ada prop user, gunakan itu
-    if (propUser) {
-      setUser({
-        name: propUser.name,
-        email: propUser.email,
-        avatar: propUser.avatar,
-        id: propUser.id || "default-id",
-      });
-      return;
-    }
-
-    // Jika tidak ada prop user, ambil dari localStorage
+    // Ambil token dari localStorage (atau bisa juga pakai cookies/session)
     const token = localStorage.getItem("token");
     console.log(token);
 
     if (!token) {
       toast.error("Anda belum login!");
-      router.push("/login");
+      router.push("/login-new");
       return;
     }
 
@@ -80,8 +60,7 @@ export function NavUser({ user: propUser }: NavUserProps) {
         id: "xxxx",
       }); // fallback
     }
-  }, [propUser]);
-
+  }, []);
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -89,7 +68,7 @@ export function NavUser({ user: propUser }: NavUserProps) {
       await logout(token); // panggil API untuk hapus token dari server
       toast.error("Logout berhasil");
       setTimeout(() => {
-        router.push("/login");
+        router.push("/login-new");
       }, 1000);
       localStorage.removeItem("token");
       localStorage.removeItem("user");
@@ -149,21 +128,6 @@ export function NavUser({ user: propUser }: NavUserProps) {
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <IconUserCircle />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconCreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconNotification />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={handleLogout}
