@@ -135,3 +135,58 @@ export async function deleteCustomer(id: number) {
   })
   return res.json()
 }
+
+
+//api barang
+export async function fetchBarang() {
+  const res = await fetch(`${BASE_URL}/barang`, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  })
+  return res.json()
+}
+export async function createBarang(data: { nama_barang: string, jumlah: number, harga: number }) {
+  const res = await fetch(`${BASE_URL}/barang`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify(data),
+  })
+  return res.json()
+}
+
+export async function updateBarang(id: string, data: any) {
+  const token = getToken()
+  if (!token) throw new Error("Token tidak ditemukan")
+
+  const res = await fetch(`${BASE_URL}/barang/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!res.ok) {
+    const errText = await res.text()
+    console.error("Gagal update:", errText)
+    throw new Error("Update gagal: " + errText)
+  }
+
+  return res.json()
+}
+
+export async function deleteBarang(id: number) {
+  const res = await fetch(`${BASE_URL}/barang/${id}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  })
+  return res.json()
+}
+

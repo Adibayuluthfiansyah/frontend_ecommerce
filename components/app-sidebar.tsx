@@ -53,7 +53,7 @@ const data = {
     
     {
       title: "Barang",
-      url: "#",
+      url: "/dashboard-full/barang",
       icon: IconFolder,
     },
     {
