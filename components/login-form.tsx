@@ -79,7 +79,7 @@ export function LoginForm({
                     placeholder="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                     autoFocus // 👉 ini yang penting
+                    autoFocus// 👉 ini yang penting
                     required
                   />
                 </div>
