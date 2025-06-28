@@ -79,7 +79,7 @@ export default function CustomerTable() {
   return (
     <div className="rounded-md border p-4 space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Daftar User</h2>
+        <h2 className="text-xl font-semibold">Daftar Customer</h2>
         <CustomerFormModal
           onSubmit={handleCreate}
           trigger={<Button>+ Tambah</Button>}
