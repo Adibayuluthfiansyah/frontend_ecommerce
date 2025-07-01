@@ -9,7 +9,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
-import { createCustomer, createUser, deleteCustomer, deleteUser, fetchCustomers, fetchUsers, updateCustomer, updateUser } from "@/lib/api";
+import {
+  createCustomer,
+  createUser,
+  deleteCustomer,
+  deleteUser,
+  fetchCustomers,
+  fetchUsers,
+  updateCustomer,
+  updateUser,
+} from "@/lib/api";
 import { Button } from "./ui/button";
 import UserFormModal from "./UserFormModal";
 import { toast } from "sonner";
@@ -57,29 +66,51 @@ export default function CustomerTable() {
       await updateCustomer(data.id, data, token);
       const updatedCustomers = await fetchCustomers();
       setCustomers(updatedCustomers);
+      toast.success("Customer berhasil diupdate");
+    } catch (err: any) {
+      try {
+        const errorData = await err.response.json(); // jika pakai fetch biasa
+        const noHpError = errorData?.errors?.no_hp?.[0];
 
-      toast.success("User berhasil diupdate");
-    } catch (err) {
-      toast.error("Gagal mengupdate user");
+        if (noHpError?.includes("has already been taken")) {
+          toast.info("Nomor handphone sudah terdaftar.");
+        } else {
+          toast.error("Gagal mengupdate user");
+        }
+      } catch (e) {
+        toast.error("Gagal mengupdate user");
+      }
     }
   };
 
   const handleCreate = async (data: any) => {
     const token = localStorage.getItem("token");
     try {
+      console.log(data);
       await createCustomer(data, token);
       const updated = await fetchCustomers();
       setCustomers(updated);
       toast.success("User berhasil ditambahkan");
-    } catch (err) {
-      toast.error("Gagal menambahkan user");
+    } catch (err: any) {
+           try {
+        const errorData = await err.response.json(); // jika pakai fetch biasa
+        const noHpError = errorData?.errors?.no_hp?.[0];
+
+        if (noHpError?.includes("has already been taken")) {
+          toast.info("Nomor handphone sudah terdaftar.");
+        } else {
+          toast.error("Gagal mengupdate user");
+        }
+      } catch (e) {
+        toast.error("Gagal mengupdate user");
+      }
     }
   };
 
   return (
     <div className="rounded-md border p-4 space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Daftar User</h2>
+        <h2 className="text-xl font-semibold">Daftar Customer</h2>
         <CustomerFormModal
           onSubmit={handleCreate}
           trigger={<Button>+ Tambah</Button>}
