@@ -1,14 +1,14 @@
 'use client'
 
 import { AppSidebar } from "@/components/app-sidebar"
-import BarangList from "@/components/barang-list"
 import { SiteHeader } from "@/components/site-header"
+import StockList from "@/components/stock-list"
 import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
 
-export default function UserPage() {
+export default function StockPage() {
   return (
     <SidebarProvider
       style={
@@ -24,13 +24,13 @@ export default function UserPage() {
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 px-4 lg:px-6">
-              <h1 className="text-2xl font-semibold tracking-tight">Daftar Barang</h1>
+              <h1 className="text-2xl font-semibold tracking-tight">Daftar Stock</h1>
               <p className="text-muted-foreground">
-                Berikut adalah daftar user yang diambil dari API Laravel.
+                Berikut adalah daftar stock yang diambil dari API Laravel.
               </p>
 
               <div className="border rounded-lg p-4 bg-muted">
-                <BarangList />
+                <StockList />
               </div>
             </div>
           </div>
