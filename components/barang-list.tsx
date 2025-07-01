@@ -9,9 +9,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
-import { createBarang, createCustomer, createUser, deleteBarang, deleteCustomer, deleteUser, fetchBarang, fetchCustomers, fetchUsers, updateBarang, updateCustomer, updateUser } from "@/lib/api";
+import { createBarang, deleteBarang, fetchBarang, updateBarang } from "@/lib/api";
 import { Button } from "./ui/button";
-import UserFormModal from "./UserFormModal";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -45,9 +44,9 @@ export default function BarangList() {
     try {
       await deleteBarang(id, token);
       setBarang((prev) => prev.filter((u) => u.id !== id));
-      toast.success("User berhasil dihapus");
+      toast.success("Barang berhasil dihapus");
     } catch (err) {
-      toast.error("Gagal menghapus user");
+      toast.error("Gagal menghapus data barang");
     }
   };
 
@@ -58,9 +57,9 @@ export default function BarangList() {
       const updatedBarang = await fetchBarang();
       setBarang(updatedBarang);
 
-      toast.success("User berhasil diupdate");
+      toast.success("Barang berhasil diupdate");
     } catch (err) {
-      toast.error("Gagal mengupdate user");
+      toast.error("Gagal mengupdate barang");
     }
   };
 
@@ -71,16 +70,15 @@ const formatRupiah = (angka: number) =>
     minimumFractionDigits: 0,
   }).format(angka);
 
-
   const handleCreate = async (data: any) => {
     const token = localStorage.getItem("token");
     try {
       await createBarang(data, token);
       const updated = await fetchBarang();
       setBarang(updated);
-      toast.success("User berhasil ditambahkan");
+      toast.success("Barang berhasil ditambahkan");
     } catch (err) {
-      toast.error("Gagal menambahkan user");
+      toast.error("Gagal menambahkan barang");
     }
   };
 

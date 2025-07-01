@@ -107,7 +107,11 @@ export default function StockList() {
           <TableRow>
             <TableHead className="w-[50px]">#</TableHead>
             <TableHead>Id Barang</TableHead>
+            <TableHead>Nama Barang</TableHead>
+            <TableHead>Jumlah</TableHead>
+            <TableHead>Harga Satuan</TableHead>
             <TableHead>Limit</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead className="text-right">Aksi</TableHead>
           </TableRow>
         </TableHeader>
@@ -116,7 +120,19 @@ export default function StockList() {
             <TableRow key={stock.id}>
               <TableCell>{index + 1}</TableCell>
               <TableCell>{stock.id_barang}</TableCell>
+              <TableCell>{stock.barang?.nama_barang}</TableCell>
+              <TableCell>{stock.barang?.jumlah}</TableCell>
+              <TableCell>{stock.barang?.harga}</TableCell>
               <TableCell>{stock.limit}</TableCell>
+              <TableCell>
+                {stock.barang?.jumlah < stock.limit ? (
+                  <span className="text-red-600 font-semibold">
+                    Out of Stock
+                  </span>
+                ) : (
+                  <span className="text-green-600 font-semibold">In Stock</span>
+                )}
+              </TableCell>
               <TableCell className="text-right space-x-2">
                 <StockFormModal
                   stock={stock}

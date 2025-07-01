@@ -58,7 +58,7 @@ const data = {
     },
     {
       title: "Persediaan",
-      url: "#",
+      url: "/dashboard-full/stock",
       icon: IconReport,
     },
     {
