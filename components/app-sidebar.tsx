@@ -63,7 +63,7 @@ const data = {
     },
     {
       title: "Pemesanan",
-      url: "#",
+      url: "/dashboard-full/order",
       icon: IconChartBar,
     },
   ],

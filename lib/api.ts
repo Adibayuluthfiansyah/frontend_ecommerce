@@ -265,3 +265,56 @@ export async function deleteStock(id: number) {
   });
   return res.json();
 }
+
+//api order
+export async function fetchOrder() {
+  const res = await fetch(`${BASE_URL}/order`, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+  return res.json();
+}
+export async function createOrder(data: { id_barang: string; limit: number }) {
+  const res = await fetch(`${BASE_URL}/order`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}
+
+export async function updateOrder(id: number, data: any) {
+  const token = getToken();
+  if (!token) throw new Error("Token tidak ditemukan");
+
+  const res = await fetch(`${BASE_URL}/order/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error("Gagal update:", errText);
+    throw new Error("Update gagal: " + errText);
+  }
+
+  return res.json();
+}
+
+export async function deleteOrder(id: number) {
+  const res = await fetch(`${BASE_URL}/order/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+  return res.json();
+}
