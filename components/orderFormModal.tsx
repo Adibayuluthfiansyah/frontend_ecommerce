@@ -1,112 +1,198 @@
 "use client";
 
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
 import {
   Select,
-  SelectContent,
-  SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
-import { fetchBarang } from "@/lib/api";
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { fetchBarang, fetchCustomers, kurangiStokBarang } from "@/lib/api";
+import { useEffect, useState } from "react";
 
-interface Stock {
-  id?: string;
-  id_barang: string;
-  limit: number;
-}
-
-interface Props {
-  stock?: Stock;
+interface OrderFormModalProps {
+  onSubmit: (data: any) => void;
+  order?: any;
   trigger: React.ReactNode;
-  onSubmit: (data: Stock) => void;
 }
 
-export default function OrderFormModal({ stock, trigger, onSubmit }: Props) {
-  const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({
-    id_barang: stock?.id_barang ?? "",
-    limit: stock?.limit ?? 0,
+export default function OrderFormModal({
+  onSubmit,
+  order = null,
+  trigger,
+}: OrderFormModalProps) {
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [barangs, setBarangs] = useState<any[]>([]);
+
+  const [formData, setFormData] = useState({
+    customer_id: order?.customer?.id || "",
+    id_barang: order?.barang?.id || "",
+    jumlah_barang: order?.jumlah_barang || 1,
+    total: order?.total || 0,
+    order_date:
+      order?.order_date?.slice(0, 10) || new Date().toISOString().slice(0, 10),
   });
-  const [value, setValue] = useState("");
-  const [barangList, setBarangList] = useState([]);
+  const [hargaBarang, setHargaBarang] = useState(0); // harga per barang
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = () => {
-    onSubmit({
-      id: stock?.id, // <- pastikan ID ini dikirim
-      id_barang: form.id_barang,
-      limit: form.limit,
-    });
-    setOpen(false);
-  };
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const loadBarang = async () => {
-      try {
-        const data = await fetchBarang();
-        setBarangList(data);
-      } catch (err) {
-        console.error("Error fetching barang:", err);
-      }
+    const loadData = async () => {
+      const [customerData, barangData] = await Promise.all([
+        fetchCustomers(),
+        fetchBarang(),
+      ]);
+      setCustomers(customerData);
+      setBarangs(barangData);
     };
-
-    loadBarang();
+    loadData();
   }, []);
 
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{stock ? "Edit Stock" : "Tambah Stock"}</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 py-2">
-          <Select
-            value={form.id_barang ?? ""}
-            onValueChange={(val) =>
-              setForm((prev) => ({ ...prev, id_barang: val }))
-            }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Pilih Barang" />
-            </SelectTrigger>
-            <SelectContent>
-              {barangList.map((barang) => (
-                <SelectItem key={barang.id} value={barang.id}>
-                  {barang.nama_barang}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <input type="hidden" name="id_barang" value={value} />
+  const handleSelectChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
 
-          <Input
-            name="limit"
-            placeholder="Jumlah"
-            value={form.limit}
-            onChange={handleChange}
-          />
-        </div>
-        <DialogFooter>
-          <Button onClick={handleSubmit}>
-            {stock ? "Simpan Perubahan" : "Tambah"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    if (field === "id_barang") {
+      const selected = barangs.find((b) => b.id === value);
+      const harga = selected?.harga || 0;
+      setHargaBarang(harga);
+
+      setFormData((prev) => ({
+        ...prev,
+        total: harga * Number(prev.jumlah_barang || 1),
+      }));
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    if (name === "jumlah_barang") {
+      const jumlah = Number(value);
+      setFormData((prev) => ({
+        ...prev,
+        jumlah_barang: jumlah,
+        total: hargaBarang * jumlah,
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Submit ke kurangiStokBarang dengan:", {
+      id_barang: formData.id_barang,
+      jumlah_barang: formData.jumlah_barang,
+    });
+    try {
+      await kurangiStokBarang(formData.id_barang, formData.jumlah_barang);
+      onSubmit(formData);
+      setOpen(false);
+    } catch (error: any) {
+      alert("Gagal: " + error.message);
+      console.error("Gagal kurangi stok:", error);
+    }
+  };
+
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>
+            {order ? "Edit Order" : "Tambah Order"}
+          </AlertDialogTitle>
+        </AlertDialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          <div>
+            <label className="text-sm">Customer</label>
+            <Select
+              value={formData.customer_id}
+              onValueChange={(value) =>
+                handleSelectChange("customer_id", value)
+              }
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Pilih Customer" />
+              </SelectTrigger>
+              <SelectContent>
+                {customers.map((cust) => (
+                  <SelectItem key={cust.id} value={cust.id}>
+                    {cust.customer_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <label className="text-sm">Barang</label>
+            <Select
+              value={formData.id_barang}
+              onValueChange={(value) => handleSelectChange("id_barang", value)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Pilih Barang" />
+              </SelectTrigger>
+              <SelectContent>
+                {barangs.map((barang) => (
+                  <SelectItem key={barang.id} value={barang.id}>
+                    {barang.nama_barang} - Rp {barang.harga}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="text-sm">Jumlah Barang</label>
+            <input
+              name="jumlah_barang"
+              type="number"
+              placeholder="Jumlah Barang"
+              value={formData.jumlah_barang}
+              onChange={handleChange}
+              required
+              className="w-full border rounded px-3 py-2"
+            />
+          </div>
+          <div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Total Harga
+              </label>
+              <div className="w-full border rounded px-3 py-2 bg-gray-100">
+                Rp {formData.total.toLocaleString("id-ID")}
+              </div>
+            </div>
+          </div>
+          <div>
+            {" "}
+            <label className="text-sm">Order Date</label>
+            <input
+              name="order_date"
+              type="date"
+              value={formData.order_date}
+              onChange={handleChange}
+              required
+              className="w-full border rounded px-3 py-2"
+            />
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <Button type="submit">{order ? "Simpan" : "Tambah"}</Button>
+          </AlertDialogFooter>
+        </form>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

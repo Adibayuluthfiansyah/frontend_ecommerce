@@ -318,3 +318,22 @@ export async function deleteOrder(id: number) {
   });
   return res.json();
 }
+
+// lib/api.ts
+export async function kurangiStokBarang(id: string, jumlah_barang: number) {
+  console.log("Kurangi stok:", { id, jumlah_barang });
+  const res = await fetch(`${BASE_URL}/barang/${id}/kurangi-stok`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify({ jumlah_barang }),
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Gagal mengurangi stok");
+  }
+
+  return res.json();
+}

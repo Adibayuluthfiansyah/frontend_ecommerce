@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -8,8 +8,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -20,42 +20,55 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
-} from "@/components/ui/alert-dialog"
-import { fetchOrder } from "@/lib/api" // pastikan path benar
-
-const OrderFormModal = ({ onSubmit, order, trigger }: any) => trigger
+} from "@/components/ui/alert-dialog";
+import { fetchOrder } from "@/lib/api"; // pastikan path benar
+import OrderFormModal from "./orderFormModal";
 
 export default function DaftarOrder() {
-  const [orders, setOrders] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const data = await fetchOrder()
-        setOrders(data)
+        const data = await fetchOrder();
+        setOrders(data);
       } catch (err) {
-        console.error("Gagal fetch order:", err)
+        console.error("Gagal fetch order:", err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    loadData()
-  }, [])
+    };
+    loadData();
+  }, []);
 
   const handleDelete = async (id: string) => {
     // Tambahkan logika hapus API kalau sudah ada endpoint
-    setOrders((prev) => prev.filter((item) => item.id !== id))
-  }
+    setOrders((prev) => prev.filter((item) => item.id !== id));
+  };
 
-  if (loading) return <p>Loading...</p>
+  if (loading) return <p>Loading...</p>;
+
+  const handleAdd = (newData: any) => {
+    const fakeId = Math.random().toString(36).substr(2, 9);
+    const newOrder = {
+      id: fakeId,
+      customer: { customer_name: newData.customer_name },
+      barang: { nama_barang: newData.nama_barang },
+      jumlah_barang: Number(newData.jumlah_barang),
+      total: Number(newData.total),
+      order_date: newData.order_date,
+    };
+
+    setOrders((prev) => [...prev, newOrder]);
+  };
 
   return (
     <div className="rounded-md border p-4 space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Daftar Order</h2>
         <OrderFormModal
-          onSubmit={() => {}}
+          onSubmit={handleAdd}
           trigger={<Button>+ Tambah</Button>}
         />
       </div>
@@ -128,5 +141,5 @@ export default function DaftarOrder() {
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }
