@@ -320,20 +320,20 @@ export async function deleteOrder(id: number) {
 }
 
 // lib/api.ts
-export async function kurangiStokBarang(id: string, jumlah_barang: number) {
-  console.log("Kurangi stok:", { id, jumlah_barang });
-  const res = await fetch(`${BASE_URL}/barang/${id}/kurangi-stok`, {
+export async function kurangiStokBarang(id_barang: string, jumlah: number) {
+  console.log("🔧 kurangiStokBarang dipanggil dengan:", { id_barang, jumlah });
+
+  const res = await fetch(`${BASE_URL}/barang/${id_barang}/kurangi-stok`, {
     method: "PATCH",
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-    body: JSON.stringify({ jumlah_barang }),
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}`, },
+    body: JSON.stringify({ jumlah }),
   });
 
   if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "Gagal mengurangi stok");
+    const err = await res.json();
+    console.error("❌ Gagal kurangi stok:", err);
+    throw new Error(err.message || "Gagal kurangi stok");
   }
 
-  return res.json();
+  return await res.json();
 }

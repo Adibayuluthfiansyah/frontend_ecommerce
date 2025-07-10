@@ -85,59 +85,38 @@ export default function DaftarOrder() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {orders.map((order, index) => (
-            <TableRow key={order.id}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>{order.customer?.customer_name}</TableCell>
-              <TableCell>{order.barang?.nama_barang}</TableCell>
-              <TableCell>
-                {new Date(order.order_date).toLocaleDateString("id-ID", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                })}
-              </TableCell>
-              <TableCell>{order.jumlah_barang}</TableCell>
-              <TableCell>Rp {order.total.toLocaleString("id-ID")}</TableCell>
-              <TableCell className="text-right space-x-2">
-                <OrderFormModal
-                  order={order}
-                  onSubmit={() => {}}
-                  trigger={
-                    <Button size="sm" variant="outline">
-                      Edit
-                    </Button>
-                  }
-                />
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="destructive" size="sm">
-                      Hapus
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Yakin ingin menghapus order ini?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Tindakan ini tidak dapat dibatalkan.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Batal</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => handleDelete(order.id)}
-                        className="bg-red-600 hover:bg-red-700"
-                      >
-                        Ya, Hapus
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </TableCell>
-            </TableRow>
-          ))}
+          {orders.map((order, index) => {
+            if (!order) return null;
+
+            const customerName = order.customer?.customer_name ?? "-";
+            const barangName = order.barang?.nama_barang ?? "-";
+            const tanggalOrder = order.order_date
+              ? new Date(order.order_date).toLocaleDateString("id-ID")
+              : "-";
+            const jumlah = Number(order.jumlah_barang ?? 0);
+            const total = typeof order.total === "number" ? order.total : 0;
+
+            return (
+              <TableRow key={order.id}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>{customerName}</TableCell>
+                <TableCell>{barangName}</TableCell>
+                <TableCell>{tanggalOrder}</TableCell>
+                <TableCell>{jumlah}</TableCell>
+                <TableCell>
+                  Rp {Number(total).toLocaleString("id-ID")}
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    variant="destructive"
+                    onClick={() => handleDelete(order.id)}
+                  >
+                    Hapus
+                  </Button>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </div>

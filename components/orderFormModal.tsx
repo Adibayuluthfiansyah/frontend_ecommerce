@@ -17,7 +17,12 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { fetchBarang, fetchCustomers, kurangiStokBarang } from "@/lib/api";
+import {
+  createOrder,
+  fetchBarang,
+  fetchCustomers,
+  kurangiStokBarang,
+} from "@/lib/api";
 import { useEffect, useState } from "react";
 
 interface OrderFormModalProps {
@@ -90,17 +95,53 @@ export default function OrderFormModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submit ke kurangiStokBarang dengan:", {
-      id_barang: formData.id_barang,
-      jumlah_barang: formData.jumlah_barang,
-    });
+
+    if (!formData.customer_id || !formData.id_barang) {
+      alert("Harap pilih customer dan barang.");
+      return;
+    }
+
+    if (formData.jumlah_barang <= 0) {
+      alert("Jumlah barang harus lebih dari 0.");
+      return;
+    }
+
+    const selectedBarang = barangs.find((b) => b.id === formData.id_barang);
+    const sisaStok = selectedBarang?.jumlah ?? 0;
+    console.log("Barang dipilih:", selectedBarang);
+    console.log(
+      "Sisa stok:",
+      sisaStok,
+      "Jumlah diminta:",
+      formData.jumlah_barang
+    );
+
+    if (selectedBarang && formData.jumlah_barang > selectedBarang.jumlah) {
+      alert("Jumlah melebihi stok yang tersedia.");
+      return;
+    }
+
     try {
+      console.log("⏳ Memulai pengurangan stok...");
       await kurangiStokBarang(formData.id_barang, formData.jumlah_barang);
-      onSubmit(formData);
+      const cleanedData = {
+        ...formData,
+        jumlah_barang: Number(formData.jumlah_barang),
+        total: Number(formData.total),
+      };
+
+      const savedOrder = await createOrder(cleanedData);
+      console.log("✅ Order berhasil disimpan:", savedOrder);
+
+      onSubmit(savedOrder);
       setOpen(false);
     } catch (error: any) {
-      alert("Gagal: " + error.message);
-      console.error("Gagal kurangi stok:", error);
+      console.error("❌ Terjadi error:", error);
+      if (error.response) {
+        console.log("Status:", error.response.status);
+        console.log("Data:", error.response.data);
+      }
+      alert("Gagal: " + (error.message || "Terjadi kesalahan"));
     }
   };
 
@@ -152,6 +193,12 @@ export default function OrderFormModal({
                 ))}
               </SelectContent>
             </Select>
+            {formData.id_barang && (
+              <div className="text-sm text-muted-foreground mt-1">
+                Sisa stok:{" "}
+                {barangs.find((b) => b.id === formData.id_barang)?.jumlah ?? 0}
+              </div>
+            )}
           </div>
           <div>
             <label className="text-sm">Jumlah Barang</label>
@@ -170,8 +217,8 @@ export default function OrderFormModal({
               <label className="text-sm font-medium text-muted-foreground">
                 Total Harga
               </label>
-              <div className="w-full border rounded px-3 py-2 bg-gray-100">
-                Rp {formData.total.toLocaleString("id-ID")}
+              <div>
+                Rp {Number(formData.total ?? 0).toLocaleString("id-ID")}
               </div>
             </div>
           </div>
