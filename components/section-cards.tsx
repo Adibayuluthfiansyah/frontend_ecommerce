@@ -19,6 +19,7 @@ export function SectionCards() {
     customers: 0,
     barangs: 0,
     orders: 0,
+    total_pendapatan: 0,
   });
 
   useEffect(() => {
@@ -117,6 +118,30 @@ export function SectionCards() {
             Meningkat stabil <IconTrendingUp className="size-4" />
           </div>
           <div className="text-muted-foreground">Pertumbuhan pemesanan</div>
+        </CardFooter>
+      </Card>
+      <Card className="@container/card">
+        <CardHeader>
+          <CardDescription>Total Pendapatan</CardDescription>
+          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+            Rp{" "}
+            {Number(counts.total_pendapatan || 0).toLocaleString("id-ID", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </CardTitle>
+          <CardAction>
+            <Badge className="bg-green-500 text-white">
+              <IconTrendingUp />
+              +4.5%
+            </Badge>
+          </CardAction>
+        </CardHeader>
+        <CardFooter className="flex-col items-start gap-1.5 text-sm">
+          <div className="flex gap-2 font-medium">
+            Meningkat stabil <IconTrendingUp className="size-4" />
+          </div>
+          <div className="text-muted-foreground">Pertumbuhan pendapatan</div>
         </CardFooter>
       </Card>
     </div>

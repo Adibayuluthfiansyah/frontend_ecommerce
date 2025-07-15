@@ -407,11 +407,32 @@ export async function fetchOrderDetails(orderId: string) {
 }
 
 export async function fetchDashboardCounts() {
-  const res = await fetch(`${BASE_URL}/dashboard-counts`,{
+  const res = await fetch(`${BASE_URL}/dashboard-counts`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
   if (!res.ok) throw new Error("Gagal mengambil data dashboard");
+  return res.json();
+}
+export async function registerUser(data: {
+  name: string;
+  username: string;
+  password: string;
+  email: string;
+}) {
+  const res = await fetch(`${BASE_URL}/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || "Registrasi gagal");
+  }
+
   return res.json();
 }
