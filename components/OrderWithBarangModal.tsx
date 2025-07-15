@@ -19,9 +19,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { fetchCustomers, fetchBarang, createOrder } from "@/lib/api";
+import { fetchCustomers, fetchBarang, createOrder, saveOrderDetails, updateOrderTotal } from "@/lib/api";
 
-export default function OrderWithBarangModal() {
+export default function OrderWithBarangModal({ onSuccess }: { onSuccess?: () => void }) {
   const [customers, setCustomers] = useState([]);
   const [barangs, setBarangs] = useState([]);
   const [orderDate, setOrderDate] = useState("");
@@ -33,6 +33,8 @@ export default function OrderWithBarangModal() {
   );
   const [selectedCustomerData, setSelectedCustomerData] = useState<any>(null);
   const [orderCreated, setOrderCreated] = useState(false);
+  const [orderId, setOrderId] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0];
@@ -66,6 +68,43 @@ export default function OrderWithBarangModal() {
     fetchData();
   }, []);
 
+const handleSaveOrderDetails = async () => {
+  if (!orderId) {
+    toast.error("Order belum dibuat. Klik 'Buat Order' terlebih dahulu.");
+    return;
+  }
+
+  const itemsToSave = barangList
+    .filter((b) => b.jumlah > 0)
+    .map((b) => ({
+      id_barang: b.id,
+      jumlah: b.jumlah,
+    }));
+
+  if (itemsToSave.length === 0) {
+    toast.error("Minimal satu barang harus memiliki jumlah > 0");
+    return;
+  }
+
+  try {
+   await saveOrderDetails(itemsToSave, orderId);
+    const totalHarga = barangList.reduce((sum, item) => {
+      const harga = barangs.find((b: any) => b.id === item.id)?.harga ?? 0;
+      return sum + harga * item.jumlah;
+    }, 0);
+
+    await updateOrderTotal(orderId, totalHarga);
+
+    toast.success("Order details dan total berhasil disimpan");
+    setOpen(false);
+    if (onSuccess) onSuccess();
+  } catch (err: any) {
+    console.error("Gagal simpan order detail:", err);
+    toast.error(err?.message || "Gagal menyimpan order detail");
+  }
+};
+
+
   const total = barangList.reduce((sum, item) => {
     const harga = barangs.find((b: any) => b.id === item.id)?.harga ?? 0;
     return sum + harga * item.jumlah;
@@ -79,30 +118,29 @@ export default function OrderWithBarangModal() {
     });
   };
 
-  const handleCreateOrder = async () => {
-    if (!selectedCustomer) {
-      toast.error("Pilih customer terlebih dahulu");
-      return;
-    }
+ const handleCreateOrder = async () => {
+  if (!selectedCustomer) {
+    toast.error("Pilih customer terlebih dahulu");
+    return;
+  }
 
-    try {
-      const today = new Date().toISOString().split("T")[0];
+  try {
+    const payload = {
+      customer_id: selectedCustomer,
+      order_date: orderDate,
+      total: 0,
+    };
 
-      const payload = {
-        customer_id: selectedCustomer,
-        order_date: today,
-        total: 0,
-      };
+    const res = await createOrder(payload);
+    setOrderId(res.id); // ⬅️ PENTING: simpan orderId
+    setOrderCreated(true);
+    toast.success("Order berhasil dibuat");
+  } catch (error) {
+    toast.error("Gagal membuat order");
+    console.error("Gagal membuat order:", error);
+  }
+};
 
-      const res = await createOrder(payload);
-      console.log("Data order:", res);
-      toast.success("Order berhasil dibuat");
-      setOrderCreated(true);
-    } catch (error) {
-      console.error("Gagal membuat order:", error);
-      toast.error("Gagal membuat order");
-    }
-  };
 
   const handleSubmit = async () => {
     if (!selectedCustomer) {
@@ -155,8 +193,9 @@ export default function OrderWithBarangModal() {
     setBarangList((prev) => prev.filter((_, i) => i !== index));
   };
 
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>Tambah Order</Button>
       </DialogTrigger>
@@ -294,7 +333,7 @@ export default function OrderWithBarangModal() {
                     </span>
                   </div>
                   <div className="flex justify-end mt-4">
-                    <Button>
+                    <Button onClick={handleSaveOrderDetails}> 
                       Simpan Order Details
                     </Button>
                   </div>

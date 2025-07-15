@@ -12,22 +12,24 @@ import {
 import { Button } from "@/components/ui/button";
 import { fetchOrder } from "@/lib/api";
 import OrderWithBarangModal from "./OrderWithBarangModal";
+import OrderDetailsModal from "./OrderDetailsModal";
 
 export default function DaftarOrder() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const loadData = async () => {
+    try {
+      const data = await fetchOrder();
+      setOrders(data);
+    } catch (err) {
+      console.error("Gagal fetch order:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const data = await fetchOrder();
-        setOrders(data);
-      } catch (err) {
-        console.error("Gagal fetch order:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     loadData();
   }, []);
 
@@ -63,6 +65,7 @@ export default function DaftarOrder() {
         <h2 className="text-xl font-semibold">Daftar Order</h2>
         <OrderWithBarangModal
           onSubmit={handleAdd}
+          onSuccess={loadData}
           trigger={<Button>+ Tambah</Button>}
         />
       </div>
@@ -72,9 +75,7 @@ export default function DaftarOrder() {
           <TableRow>
             <TableHead>#</TableHead>
             <TableHead>Nama Customer</TableHead>
-            <TableHead>Nama Barang</TableHead>
             <TableHead>Tanggal Order</TableHead>
-            <TableHead>Jumlah</TableHead>
             <TableHead>Total</TableHead>
             <TableHead className="text-right">Aksi</TableHead>
           </TableRow>
@@ -82,30 +83,24 @@ export default function DaftarOrder() {
         <TableBody>
           {orders.map((order, index) => {
             const customerName = order.customer?.customer_name ?? "-";
-            const barangName = order.barang?.nama_barang ?? "-";
             const tanggalOrder = order.order_date
               ? new Date(order.order_date).toLocaleDateString("id-ID")
               : "-";
-            const jumlah = Number(order.jumlah_barang ?? 0);
             const total = typeof order.total === "number" ? order.total : 0;
 
             return (
               <TableRow key={order.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{customerName}</TableCell>
-                <TableCell>{barangName}</TableCell>
                 <TableCell>{tanggalOrder}</TableCell>
-                <TableCell>{jumlah}</TableCell>
                 <TableCell>
                   Rp {Number(total).toLocaleString("id-ID")}
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button
-                    variant="destructive"
-                    onClick={() => handleDelete(order.id)}
-                  >
-                    Hapus
-                  </Button>
+                  <OrderDetailsModal
+                    orderId={order.id}
+                    trigger={<Button variant="secondary">Lihat Barang</Button>}
+                  />
                 </TableCell>
               </TableRow>
             );

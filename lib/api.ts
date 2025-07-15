@@ -357,3 +357,62 @@ export async function kurangiStokBarang(id_barang: string, jumlah: number) {
 
   return await res.json();
 }
+
+
+export async function saveOrderDetails(
+  items: { id_barang: string; jumlah: number }[],
+  order_id: string
+) {
+  const res = await fetch(`${BASE_URL}/orderDetail/${order_id}/details`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify({ items }), // ✅ wajib dikirim dalam objek
+  });
+
+  const contentType = res.headers.get("content-type");
+  if (!res.ok) {
+    const error =
+      contentType?.includes("application/json")
+        ? await res.json()
+        : await res.text();
+    throw new Error(
+      typeof error === "string" ? error : error.message || "Unknown error"
+    );
+  }
+
+  return res.json();
+}
+
+
+export async function updateOrderTotal(orderId: string, total: number) {
+  const res = await fetch(`${BASE_URL}/order/${orderId}/updateTotal`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify({ total }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw err;
+  }
+
+  return res.json();
+}
+
+export async function fetchOrderDetails(orderId: string) {
+  const res = await fetch(`${BASE_URL}/orderDetail/${orderId}`, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`
+    }
+  });
+
+  if (!res.ok) throw new Error("Gagal ambil detail order");
+
+  return res.json();
+}
