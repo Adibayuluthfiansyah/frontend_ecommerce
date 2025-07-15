@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { fetchOrder } from "@/lib/api";
 import OrderWithBarangModal from "./OrderWithBarangModal";
 import OrderDetailsModal from "./OrderDetailsModal";
+import { noSSR } from "next/dynamic";
 
 export default function DaftarOrder() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -53,10 +54,6 @@ export default function DaftarOrder() {
     setOrders((prev) => [...prev, newOrder]);
   };
 
-  const handleDelete = async (id: string) => {
-    setOrders((prev) => prev.filter((item) => item.id !== id));
-  };
-
   if (loading) return <p>Loading...</p>;
 
   return (
@@ -75,6 +72,7 @@ export default function DaftarOrder() {
           <TableRow>
             <TableHead>#</TableHead>
             <TableHead>Nama Customer</TableHead>
+            <TableHead>No HP</TableHead>
             <TableHead>Tanggal Order</TableHead>
             <TableHead>Total</TableHead>
             <TableHead className="text-right">Aksi</TableHead>
@@ -83,6 +81,7 @@ export default function DaftarOrder() {
         <TableBody>
           {orders.map((order, index) => {
             const customerName = order.customer?.customer_name ?? "-";
+            const no_hp = order.customer?.no_hp ?? "-";
             const tanggalOrder = order.order_date
               ? new Date(order.order_date).toLocaleDateString("id-ID")
               : "-";
@@ -92,6 +91,7 @@ export default function DaftarOrder() {
               <TableRow key={order.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{customerName}</TableCell>
+                 <TableCell>{no_hp}</TableCell>
                 <TableCell>{tanggalOrder}</TableCell>
                 <TableCell>
                   Rp {Number(total).toLocaleString("id-ID")}

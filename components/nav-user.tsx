@@ -41,9 +41,7 @@ export function NavUser() {
   useEffect(() => {
     // Ambil token dari localStorage (atau bisa juga pakai cookies/session)
     const token = localStorage.getItem("token");
-    console.log(token);
-
-    if (!token) {
+     if (!token) {
       toast.error("Anda belum login!");
       router.push("/login-new");
       return;

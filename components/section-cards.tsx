@@ -1,6 +1,9 @@
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
+"use client";
 
-import { Badge } from "@/components/ui/badge"
+import { useEffect, useState } from "react";
+import { fetchDashboardCounts } from "@/lib/api";
+import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardAction,
@@ -8,16 +11,36 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 
 export function SectionCards() {
+  const [counts, setCounts] = useState({
+    users: 0,
+    customers: 0,
+    barangs: 0,
+    orders: 0,
+  });
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await fetchDashboardCounts();
+        setCounts(data);
+      } catch (err) {
+        console.error("Gagal mengambil data dashboard:", err);
+      }
+    };
+
+    load();
+  }, []);
+
   return (
-    <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 px-4 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Total Pengguna</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            30
+            {counts.users}
           </CardTitle>
           <CardAction>
             <Badge className="bg-green-500 text-white">
@@ -27,61 +50,60 @@ export function SectionCards() {
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
+          <div className="flex gap-2 font-medium">
             Trending up this month <IconTrendingUp className="size-4" />
           </div>
-          <div className="text-muted-foreground">
-            Visitors for the last 6 months
-          </div>
+          <div className="text-muted-foreground">Total pengguna terdaftar</div>
         </CardFooter>
       </Card>
+
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Customer Baru</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            1,020
+            {counts.customers}
           </CardTitle>
           <CardAction>
             <Badge variant="destructive">
               <IconTrendingDown />
-              -20%
+              -5%
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Down 20% this period <IconTrendingDown className="size-4" />
+          <div className="flex gap-2 font-medium">
+            Penurunan bulan ini <IconTrendingDown className="size-4" />
           </div>
-          <div className="text-muted-foreground">
-            Acquisition needs attention
-          </div>
+          <div className="text-muted-foreground">Butuh penambahan prospek</div>
         </CardFooter>
       </Card>
+
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Jumlah Barang</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            300
+            {counts.barangs}
           </CardTitle>
           <CardAction>
             <Badge className="bg-green-500 text-white">
               <IconTrendingUp />
-              +12.5%
+              +8%
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Strong user retention <IconTrendingUp className="size-4" />
+          <div className="flex gap-2 font-medium">
+            Stok meningkat <IconTrendingUp className="size-4" />
           </div>
-          <div className="text-muted-foreground">Engagement exceed targets</div>
+          <div className="text-muted-foreground">Manajemen gudang optimal</div>
         </CardFooter>
       </Card>
+
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Pemesanan</CardDescription>
+          <CardDescription>Total Order</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            4.2%
+            {counts.orders}
           </CardTitle>
           <CardAction>
             <Badge className="bg-green-500 text-white">
@@ -91,12 +113,12 @@ export function SectionCards() {
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Steady performance increase <IconTrendingUp className="size-4" />
+          <div className="flex gap-2 font-medium">
+            Meningkat stabil <IconTrendingUp className="size-4" />
           </div>
-          <div className="text-muted-foreground">Meets growth projections</div>
+          <div className="text-muted-foreground">Pertumbuhan pemesanan</div>
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

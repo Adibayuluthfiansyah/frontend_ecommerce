@@ -94,7 +94,7 @@ export async function fetchCustomers() {
     },
   });
   if (!res.ok) throw new Error("Gagal fetch customer");
- const json = await res.json(); 
+  const json = await res.json();
   return json;
 }
 
@@ -167,7 +167,7 @@ export async function fetchBarang() {
     },
   });
   if (!res.ok) throw new Error("Gagal fetch barang");
-  const json = await res.json(); 
+  const json = await res.json();
   return json;
 }
 export async function createBarang(data: {
@@ -303,7 +303,6 @@ export async function createOrder(data: {
   return res.json();
 }
 
-
 export async function updateOrder(id: number, data: any) {
   const token = getToken();
   if (!token) throw new Error("Token tidak ditemukan");
@@ -358,34 +357,24 @@ export async function kurangiStokBarang(id_barang: string, jumlah: number) {
   return await res.json();
 }
 
-
-export async function saveOrderDetails(
-  items: { id_barang: string; jumlah: number }[],
-  order_id: string
-) {
-  const res = await fetch(`${BASE_URL}/orderDetail/${order_id}/details`, {
+export async function saveOrderDetails(orderId: string, items: any[]) {
+  const token = getToken();
+  const res = await fetch(`${BASE_URL}/orderDetail/${orderId}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
+      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ items }), // ✅ wajib dikirim dalam objek
+    body: JSON.stringify({ items }), // ✅ HARUS { items: [...] }
   });
 
-  const contentType = res.headers.get("content-type");
   if (!res.ok) {
-    const error =
-      contentType?.includes("application/json")
-        ? await res.json()
-        : await res.text();
-    throw new Error(
-      typeof error === "string" ? error : error.message || "Unknown error"
-    );
+    const error = await res.json();
+    throw error;
   }
 
   return res.json();
 }
-
 
 export async function updateOrderTotal(orderId: string, total: number) {
   const res = await fetch(`${BASE_URL}/order/${orderId}/updateTotal`, {
@@ -408,11 +397,21 @@ export async function updateOrderTotal(orderId: string, total: number) {
 export async function fetchOrderDetails(orderId: string) {
   const res = await fetch(`${BASE_URL}/orderDetail/${orderId}`, {
     headers: {
-      Authorization: `Bearer ${getToken()}`
-    }
+      Authorization: `Bearer ${getToken()}`,
+    },
   });
 
   if (!res.ok) throw new Error("Gagal ambil detail order");
 
+  return res.json();
+}
+
+export async function fetchDashboardCounts() {
+  const res = await fetch(`${BASE_URL}/dashboard-counts`,{
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+  if (!res.ok) throw new Error("Gagal mengambil data dashboard");
   return res.json();
 }
