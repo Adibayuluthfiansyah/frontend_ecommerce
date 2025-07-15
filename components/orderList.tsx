@@ -10,19 +10,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
-import { fetchOrder } from "@/lib/api"; // pastikan path benar
-import OrderFormModal from "./orderFormModal";
+import { fetchOrder } from "@/lib/api";
+import OrderWithBarangModal from "./OrderWithBarangModal";
 
 export default function DaftarOrder() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -42,36 +31,42 @@ export default function DaftarOrder() {
     loadData();
   }, []);
 
-  const handleDelete = async (id: string) => {
-    // Tambahkan logika hapus API kalau sudah ada endpoint
-    setOrders((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  if (loading) return <p>Loading...</p>;
-
   const handleAdd = (newData: any) => {
     const fakeId = Math.random().toString(36).substr(2, 9);
+
+    const customerName =
+      newData.customer_name ??
+      newData.customer?.customer_name ??
+      "Customer Tidak Diketahui";
+
     const newOrder = {
       id: fakeId,
-      customer: { customer_name: newData.customer_name },
-      barang: { nama_barang: newData.nama_barang },
-      jumlah_barang: Number(newData.jumlah_barang),
-      total: Number(newData.total),
+      customer: { customer_name: customerName },
+      barang: { nama_barang: newData.nama_barang ?? "-" },
+      jumlah_barang: newData.jumlah_barang ?? 0,
+      total: newData.total ?? 0,
       order_date: newData.order_date,
     };
 
     setOrders((prev) => [...prev, newOrder]);
   };
 
+  const handleDelete = async (id: string) => {
+    setOrders((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  if (loading) return <p>Loading...</p>;
+
   return (
     <div className="rounded-md border p-4 space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Daftar Order</h2>
-        <OrderFormModal
+        <OrderWithBarangModal
           onSubmit={handleAdd}
           trigger={<Button>+ Tambah</Button>}
         />
       </div>
+
       <Table>
         <TableHeader>
           <TableRow>
@@ -86,8 +81,6 @@ export default function DaftarOrder() {
         </TableHeader>
         <TableBody>
           {orders.map((order, index) => {
-            if (!order) return null;
-
             const customerName = order.customer?.customer_name ?? "-";
             const barangName = order.barang?.nama_barang ?? "-";
             const tanggalOrder = order.order_date

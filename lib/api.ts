@@ -93,8 +93,11 @@ export async function fetchCustomers() {
       Authorization: `Bearer ${getToken()}`,
     },
   });
-  return res.json();
+  if (!res.ok) throw new Error("Gagal fetch customer");
+ const json = await res.json(); 
+  return json;
 }
+
 export async function createCustomer(data: {
   customer_name: string;
   alamat: string;
@@ -163,7 +166,9 @@ export async function fetchBarang() {
       Authorization: `Bearer ${getToken()}`,
     },
   });
-  return res.json();
+  if (!res.ok) throw new Error("Gagal fetch barang");
+  const json = await res.json(); 
+  return json;
 }
 export async function createBarang(data: {
   nama_barang: string;
@@ -275,7 +280,12 @@ export async function fetchOrder() {
   });
   return res.json();
 }
-export async function createOrder(data: { id_barang: string; limit: number }) {
+export async function createOrder(data: {
+  customer_id: string; // ✅ HARUS pakai ini, bukan `id_customer`
+  order_date: string;
+  total: number;
+  items: { id: string; jumlah: number }[]; // jika kamu kirim items
+}) {
   const res = await fetch(`${BASE_URL}/order`, {
     method: "POST",
     headers: {
@@ -284,8 +294,15 @@ export async function createOrder(data: { id_barang: string; limit: number }) {
     },
     body: JSON.stringify(data),
   });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw err;
+  }
+
   return res.json();
 }
+
 
 export async function updateOrder(id: number, data: any) {
   const token = getToken();
@@ -325,7 +342,10 @@ export async function kurangiStokBarang(id_barang: string, jumlah: number) {
 
   const res = await fetch(`${BASE_URL}/barang/${id_barang}/kurangi-stok`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}`, },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
     body: JSON.stringify({ jumlah }),
   });
 
