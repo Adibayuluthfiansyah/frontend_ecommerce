@@ -28,7 +28,7 @@ interface Category {
 
 interface CategoryFormModalProps {
   category?: Category;
-  onSubmit: (data: Category) => void;
+  onSubmit: (data: FormData) => void;
   trigger: React.ReactNode;
 }
 
@@ -90,23 +90,61 @@ export default function CategoryFormModal({
   };
 
   const handleSubmit = async () => {
+    // ✅ Validasi form sebelum submit
+    if (!formData.name.trim()) {
+      alert('Nama category wajib diisi!');
+      return;
+    }
+
     setLoading(true);
     
     try {
-      // Create the final data object
-      const submitData: Category = {
-        ...formData,
-        // If there's a new image file, you might want to handle it differently
-        // For now, keeping the existing image reference
-      };
-
-      // If you need to handle file upload, you can access imageFile here
-      // and create FormData if your API expects multipart/form-data
+      // ✅ Create FormData baru untuk setiap submit
+      const submitData = new FormData();
       
+      // ✅ PENTING: Gunakan field name yang sesuai dengan Laravel backend
+      submitData.append('nama', formData.name.trim()); // ← 'nama' bukan 'name'
+      
+      if (formData.description) {
+        submitData.append('description', formData.description.trim());
+      }
+      submitData.append('is_active', formData.is_active ? '1' : '0');
+      
+      // ✅ Tambahkan image file jika ada
+      if (imageFile) {
+        submitData.append('image', imageFile);
+      }
+      
+      // ✅ Untuk edit mode
+      if (isEdit && formData.id) {
+        submitData.append('id', formData.id.toString());
+      }
+
+      // ✅ Debug: cek isi FormData sebelum dikirim
+      console.log('=== FormData yang akan dikirim ===');
+      for (let [key, value] of submitData.entries()) {
+        if (value instanceof File) {
+          console.log(`${key}: [File] ${value.name} (${value.size} bytes)`);
+        } else {
+          console.log(`${key}: ${value}`);
+        }
+      }
+
       await onSubmit(submitData);
       setOpen(false);
+      
+      // ✅ Reset form setelah sukses
+      setFormData({
+        name: "",
+        description: "",
+        is_active: true,
+      });
+      setImageFile(null);
+      setImagePreview(null);
+      
     } catch (error) {
       console.error("Error submitting form:", error);
+      // Error handling sudah di parent component
     } finally {
       setLoading(false);
     }
@@ -115,6 +153,18 @@ export default function CategoryFormModal({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // ✅ Validasi file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+      
+      // ✅ Validasi file size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Image file size must be less than 2MB');
+        return;
+      }
+      
       setImageFile(file);
       
       // Create preview
@@ -164,6 +214,10 @@ export default function CategoryFormModal({
               placeholder="Masukkan nama category"
               required
             />
+            {/* ✅ Tampilkan peringatan jika kosong */}
+            {!formData.name.trim() && (
+              <p className="text-sm text-red-500">Nama category wajib diisi</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -186,6 +240,9 @@ export default function CategoryFormModal({
               accept="image/*"
               onChange={handleImageChange}
             />
+            <p className="text-sm text-muted-foreground">
+              Format: JPG, PNG, GIF. Maksimal 2MB.
+            </p>
             {imagePreview && (
               <div className="relative inline-block">
                 <img
@@ -225,7 +282,10 @@ export default function CategoryFormModal({
           >
             Batal
           </Button>
-          <Button onClick={handleSubmit} disabled={loading}>
+          <Button 
+            onClick={handleSubmit} 
+            disabled={loading || !formData.name.trim()}
+          >
             {loading ? "Menyimpan..." : isEdit ? "Simpan Perubahan" : "Tambah"}
           </Button>
         </DialogFooter>

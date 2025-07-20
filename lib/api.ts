@@ -438,147 +438,222 @@ export async function registerUser(data: {
 }
 
 // categori
-export async function fetchCategories() {
-  const token = localStorage.getItem('token');
+// Update category - Perbaikan utama
+export const updateCategory = async (id: number, formData: FormData) => {
   try {
-    const response = await fetch(`${BASE_URL}/categories`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
+    const token = getToken();
+    if (!token) throw new Error('Token tidak ditemukan');
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch categories');
+    // ✅ Debug FormData yang diterima
+    console.log('=== updateCategory: FormData received ===');
+    for (let [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        console.log(`${key}: [File] ${value.name} (${value.size} bytes)`);
+      } else {
+        console.log(`${key}: ${value}`);
+      }
     }
 
-    const data = await response.json();
-    return data.data || [];
-  } catch (error) {
-    console.error('Error fetching categories:', error);
-    throw error;
-  }
-}
+    // ✅ Tambahkan _method untuk Laravel method spoofing
+    formData.append('_method', 'PUT');
 
-
-export async function fetchActiveCategories() {
-  const token = localStorage.getItem('token');
-  try {
-    const response = await fetch(`${BASE_URL}/categories-active`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch active categories');
-    }
-
-    const data = await response.json();
-    return data.data || [];
-  } catch (error) {
-    console.error('Error fetching active categories:', error);
-    throw error;
-  }
-}
-
-
-export async function createCategory(categoryData: FormData, token: string | null) {
-  try {
-    const response = await fetch(`${BASE_URL}/categories`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        // Don't set Content-Type for FormData, let the browser set it
-      },
-      body: categoryData,
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to create category');
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error creating category:', error);
-    throw error;
-  }
-}
-
-
-export async function updateCategory(id: number, categoryData: FormData, token: string | null) {
-  try {
-
-    categoryData.append('_method', 'PUT');
-    
     const response = await fetch(`${BASE_URL}/categories/${id}`, {
-      method: 'POST', 
+      method: 'POST', // ✅ Tetap POST karena menggunakan FormData dengan _method
       headers: {
         'Authorization': `Bearer ${token}`,
-
+        // ❌ JANGAN tambahkan Content-Type untuk FormData! Browser akan set otomatis
       },
-      body: categoryData,
+      body: formData
     });
 
+    // ✅ Debug response
+    console.log('Update Response Status:', response.status);
+    
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to update category');
+      // ✅ Coba parse sebagai JSON, jika gagal ambil sebagai text
+      let errorMessage;
+      try {
+        const errorData = await response.json();
+        console.log('Update Error Data:', errorData);
+        
+        // ✅ Handle validation errors
+        if (response.status === 422 && errorData.errors) {
+          const validationErrors = Object.entries(errorData.errors)
+            .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
+            .join(' | ');
+          errorMessage = `Validation Error: ${validationErrors}`;
+        } else {
+          errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+        }
+      } catch {
+        const errorText = await response.text();
+        console.log('Update Error Text:', errorText);
+        errorMessage = errorText || `HTTP error! status: ${response.status}`;
+      }
+      throw new Error(errorMessage);
     }
 
-    const data = await response.json();
-    return data;
+    const result = await response.json();
+    console.log('Update Success Result:', result);
+    
+    if (result.status === 'success') {
+      return result.data;
+    } else {
+      throw new Error(result.message || 'Failed to update category');
+    }
   } catch (error) {
     console.error('Error updating category:', error);
     throw error;
   }
-}
+};
 
-
-export async function deleteCategory(id: number, token: string | null) {
+// Create category - Perbaikan
+export const createCategory = async (formData: FormData) => {
   try {
+    const token = getToken();
+    if (!token) throw new Error('Token tidak ditemukan');
+
+    // ✅ Debug FormData yang diterima
+    console.log('=== createCategory: FormData received ===');
+    for (let [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        console.log(`${key}: [File] ${value.name} (${value.size} bytes)`);
+      } else {
+        console.log(`${key}: ${value}`);
+      }
+    }
+
+    const response = await fetch(`${BASE_URL}/categories`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        // ❌ JANGAN tambahkan Content-Type untuk FormData!
+      },
+      body: formData
+    });
+
+    // ✅ Debug response
+    console.log('Create Response Status:', response.status);
+
+    if (!response.ok) {
+      let errorMessage;
+      try {
+        const errorData = await response.json();
+        console.log('Create Error Data:', errorData);
+        
+        // ✅ Untuk error 422, tampilkan detail validation errors
+        if (response.status === 422 && errorData.errors) {
+          const validationErrors = Object.entries(errorData.errors)
+            .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
+            .join(' | ');
+          errorMessage = `Validation Error: ${validationErrors}`;
+        } else {
+          errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+        }
+      } catch {
+        const errorText = await response.text();
+        console.log('Create Error Text:', errorText);
+        errorMessage = errorText || `HTTP error! status: ${response.status}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    const result = await response.json();
+    console.log('Create Success Result:', result);
+    
+    if (result.status === 'success') {
+      return result.data;
+    } else {
+      throw new Error(result.message || 'Failed to create category');
+    }
+  } catch (error) {
+    console.error('Error creating category:', error);
+    throw error;
+  }
+};
+
+// ✅ Fetch categories dengan better error handling
+export const fetchCategories = async () => {
+  try {
+    const token = getToken();
+    const response = await fetch(`${BASE_URL}/categories`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    console.log('Fetch Categories Response Status:', response.status);
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('Token tidak valid atau expired');
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log('Fetch Categories Result:', result);
+    
+    if (result.status === 'success') {
+      return result.data;
+    } else {
+      throw new Error(result.message || 'Failed to fetch categories');
+    }
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    throw error;
+  }
+};
+
+// ✅ Delete category dengan better error handling
+export const deleteCategory = async (id: number, token: string | null) => {
+  try {
+    if (!token) throw new Error('Token tidak ditemukan');
+    
     const response = await fetch(`${BASE_URL}/categories/${id}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
 
+    console.log('Delete Category Response Status:', response.status);
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to delete category');
+      let errorMessage;
+      try {
+        const errorData = await response.json();
+        console.log('Delete Error Data:', errorData);
+        
+        if (response.status === 422 && errorData.errors) {
+          const validationErrors = Object.entries(errorData.errors)
+            .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
+            .join(' | ');
+          errorMessage = `Validation Error: ${validationErrors}`;
+        } else {
+          errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+        }
+      } catch {
+        const errorText = await response.text();
+        console.log('Delete Error Text:', errorText);
+        errorMessage = errorText || `HTTP error! status: ${response.status}`;
+      }
+      throw new Error(errorMessage);
     }
 
-    const data = await response.json();
-    return data;
+    const result = await response.json();
+    console.log('Delete Success Result:', result);
+    
+    if (result.status === 'success') {
+      return result;
+    } else {
+      throw new Error(result.message || 'Failed to delete category');
+    }
   } catch (error) {
     console.error('Error deleting category:', error);
     throw error;
   }
-}
-
-
-export async function fetchCategory(id: number) {
-  const token = localStorage.getItem('token');
-  try {
-    const response = await fetch(`${BASE_URL}/categories/${id}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch category');
-    }
-
-    const data = await response.json();
-    return data.data;
-  } catch (error) {
-    console.error('Error fetching category:', error);
-    throw error;
-  }
-}
+};

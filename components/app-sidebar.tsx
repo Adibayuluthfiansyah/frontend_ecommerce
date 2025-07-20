@@ -3,6 +3,7 @@
 import * as React from "react"
 import {
   IconCamera,
+  IconCategory,
   IconChartBar,
   IconDashboard,
   IconDatabase,
@@ -54,8 +55,8 @@ const data = {
 
     {
     title: "Kategori", 
-    icon: "category-icon", 
-    url: "dashboard-full/kategori",  
+    icon: IconCategory, 
+    url: "/dashboard-full/kategori",  
   },
     
     {

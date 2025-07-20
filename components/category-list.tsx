@@ -40,45 +40,102 @@ interface Category {
 
 export default function CategoryList() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadCategories = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await fetchCategories();
+      setCategories(data);
+    } catch (error: any) {
+      console.error('Error loading categories:', error);
+      setError(error.message || "Gagal memuat data kategori");
+      toast.error(error.message || "Gagal memuat data kategori");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    fetchCategories().then(setCategories);
+    loadCategories();
   }, []);
 
   const handleDelete = async (id: number) => {
     const token = localStorage.getItem("token");
     try {
       await deleteCategory(id, token);
-      setCategories((prev) => prev.filter((c) => c.id !== id));
+      await loadCategories(); // Reload data
       toast.success("Category berhasil dihapus");
-    } catch (err) {
-      toast.error("Gagal menghapus data category");
+    } catch (err: any) {
+      console.error('Delete error:', err);
+      toast.error(err.message || "Gagal menghapus data category");
     }
   };
 
-  const handleUpdate = async (data: any) => {
-    const token = localStorage.getItem("token");
+  const handleUpdate = async (formData: FormData) => {
     try {
-      await updateCategory(data.id, data, token);
-      const updatedCategories = await fetchCategories();
-      setCategories(updatedCategories);
+      const id = Number(formData.get('id'));
+      if (!id) throw new Error('ID kategori tidak ditemukan');
+      
+      // ✅ Debug: log FormData contents
+      console.log('Update FormData:');
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+      
+      await updateCategory(id, formData);
+      await loadCategories(); // Reload data
       toast.success("Category berhasil diupdate");
-    } catch (err) {
-      toast.error("Gagal mengupdate category");
+    } catch (err: any) {
+      console.error('Update error:', err);
+      toast.error(err.message || "Gagal mengupdate category");
     }
   };
 
-  const handleCreate = async (data: any) => {
-    const token = localStorage.getItem("token");
+  const handleCreate = async (formData: FormData) => {
     try {
-      await createCategory(data, token);
-      const updated = await fetchCategories();
-      setCategories(updated);
+      // ✅ Debug: log FormData contents
+      console.log('Create FormData:');
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+      
+      await createCategory(formData);
+      await loadCategories(); // Reload data
       toast.success("Category berhasil ditambahkan");
-    } catch (err) {
-      toast.error("Gagal menambahkan category");
+    } catch (err: any) {
+      console.error('Create error:', err);
+      toast.error(err.message || "Gagal menambahkan category");
     }
   };
+
+  // ✅ Loading state
+  if (loading && categories.length === 0) {
+    return (
+      <div className="rounded-md border p-4">
+        <div className="flex justify-center items-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          <p className="ml-2">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ✅ Error state
+  if (error && categories.length === 0) {
+    return (
+      <div className="rounded-md border p-4">
+        <div className="flex flex-col justify-center items-center py-8 space-y-4">
+          <p className="text-red-600">{error}</p>
+          <Button onClick={loadCategories} variant="outline">
+            Coba Lagi
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-md border p-4 space-y-4">
@@ -89,6 +146,14 @@ export default function CategoryList() {
           trigger={<Button>+ Tambah</Button>}
         />
       </div>
+      
+      {/* ✅ Loading overlay saat reload */}
+      {loading && categories.length > 0 && (
+        <div className="flex justify-center py-2">
+          <p className="text-sm text-muted-foreground">Memuat ulang...</p>
+        </div>
+      )}
+      
       <Table>
         <TableHeader>
           <TableRow>
@@ -117,16 +182,24 @@ export default function CategoryList() {
                       src={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:8000'}/storage/${category.image}`} 
                       alt={category.name}
                       className="w-10 h-10 object-cover rounded-md"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        const fallback = e.currentTarget.parentElement?.querySelector('.fallback-icon');
+                        if (fallback) {
+                          fallback.classList.remove('hidden');
+                        }
+                      }}
                     />
-                  ) : (
-                    <div className="w-10 h-10 bg-muted rounded-md flex items-center justify-center">
-                      <ImageIcon className="w-4 h-4 text-muted-foreground" />
-                    </div>
-                  )}
+                  ) : null}
+                  <div className={`w-10 h-10 bg-muted rounded-md flex items-center justify-center ${category.image ? 'hidden fallback-icon' : ''}`}>
+                    <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                  </div>
                 </TableCell>
                 <TableCell className="font-medium">{category.name}</TableCell>
-                <TableCell className="max-w-xs truncate">
-                  {category.description || "-"}
+                <TableCell className="max-w-xs">
+                  <div className="truncate" title={category.description}>
+                    {category.description || "-"}
+                  </div>
                 </TableCell>
                 <TableCell>
                   <Badge variant={category.is_active ? "default" : "secondary"}>
@@ -152,7 +225,7 @@ export default function CategoryList() {
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>
-                          Yakin ingin menghapus category ini?
+                          Yakin ingin menghapus category "{category.name}"?
                         </AlertDialogTitle>
                         <AlertDialogDescription>
                           Tindakan ini tidak bisa dibatalkan. Data akan hilang
