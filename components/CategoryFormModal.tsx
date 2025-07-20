@@ -20,7 +20,6 @@ import { X } from "lucide-react";
 interface Category {
   id?: number;
   name: string;
-  slug?: string;
   description?: string;
   image?: string;
   is_active: boolean;
@@ -90,7 +89,7 @@ export default function CategoryFormModal({
   };
 
   const handleSubmit = async () => {
-    // ✅ Validasi form sebelum submit
+    // Validasi form sebelum submit
     if (!formData.name.trim()) {
       alert('Nama category wajib diisi!');
       return;
@@ -99,28 +98,28 @@ export default function CategoryFormModal({
     setLoading(true);
     
     try {
-      // ✅ Create FormData baru untuk setiap submit
+      // Create FormData baru untuk setiap submit
       const submitData = new FormData();
       
-      // ✅ PENTING: Gunakan field name yang sesuai dengan Laravel backend
-      submitData.append('nama', formData.name.trim()); // ← 'nama' bukan 'name'
+      // PENTING: Gunakan field name yang sesuai dengan Laravel backend
+      submitData.append('nama', formData.name.trim()); // 'nama' bukan 'name'
       
       if (formData.description) {
         submitData.append('description', formData.description.trim());
       }
       submitData.append('is_active', formData.is_active ? '1' : '0');
       
-      // ✅ Tambahkan image file jika ada
+      // Tambahkan image file jika ada
       if (imageFile) {
         submitData.append('image', imageFile);
       }
       
-      // ✅ Untuk edit mode
+      // Untuk edit mode
       if (isEdit && formData.id) {
         submitData.append('id', formData.id.toString());
       }
 
-      // ✅ Debug: cek isi FormData sebelum dikirim
+      // Debug: cek isi FormData sebelum dikirim
       console.log('=== FormData yang akan dikirim ===');
       for (let [key, value] of submitData.entries()) {
         if (value instanceof File) {
@@ -133,7 +132,7 @@ export default function CategoryFormModal({
       await onSubmit(submitData);
       setOpen(false);
       
-      // ✅ Reset form setelah sukses
+      // Reset form setelah sukses
       setFormData({
         name: "",
         description: "",
@@ -153,13 +152,13 @@ export default function CategoryFormModal({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // ✅ Validasi file type
+      // Validasi file type
       if (!file.type.startsWith('image/')) {
         alert('Please select an image file');
         return;
       }
       
-      // ✅ Validasi file size (max 2MB)
+      // Validasi file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
         alert('Image file size must be less than 2MB');
         return;
@@ -214,7 +213,7 @@ export default function CategoryFormModal({
               placeholder="Masukkan nama category"
               required
             />
-            {/* ✅ Tampilkan peringatan jika kosong */}
+            {/* Tampilkan peringatan jika kosong */}
             {!formData.name.trim() && (
               <p className="text-sm text-red-500">Nama category wajib diisi</p>
             )}

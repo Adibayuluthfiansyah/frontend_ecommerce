@@ -30,7 +30,6 @@ import { Image as ImageIcon } from "lucide-react";
 interface Category {
   id: number;
   name: string;
-  slug: string;
   description?: string;
   image?: string;
   is_active: boolean;
@@ -79,7 +78,7 @@ export default function CategoryList() {
       const id = Number(formData.get('id'));
       if (!id) throw new Error('ID kategori tidak ditemukan');
       
-      // ✅ Debug: log FormData contents
+      // Debug: log FormData contents
       console.log('Update FormData:');
       for (let [key, value] of formData.entries()) {
         console.log(`${key}:`, value);
@@ -96,7 +95,7 @@ export default function CategoryList() {
 
   const handleCreate = async (formData: FormData) => {
     try {
-      // ✅ Debug: log FormData contents
+      // Debug: log FormData contents
       console.log('Create FormData:');
       for (let [key, value] of formData.entries()) {
         console.log(`${key}:`, value);
@@ -111,7 +110,7 @@ export default function CategoryList() {
     }
   };
 
-  // ✅ Loading state
+  // Loading state
   if (loading && categories.length === 0) {
     return (
       <div className="rounded-md border p-4">
@@ -123,7 +122,7 @@ export default function CategoryList() {
     );
   }
 
-  // ✅ Error state
+  // Error state
   if (error && categories.length === 0) {
     return (
       <div className="rounded-md border p-4">
@@ -147,7 +146,7 @@ export default function CategoryList() {
         />
       </div>
       
-      {/* ✅ Loading overlay saat reload */}
+      {/* Loading overlay saat reload */}
       {loading && categories.length > 0 && (
         <div className="flex justify-center py-2">
           <p className="text-sm text-muted-foreground">Memuat ulang...</p>
