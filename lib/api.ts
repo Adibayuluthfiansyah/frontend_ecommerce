@@ -436,3 +436,149 @@ export async function registerUser(data: {
 
   return res.json();
 }
+
+// categori
+export async function fetchCategories() {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await fetch(`${BASE_URL}/categories`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch categories');
+    }
+
+    const data = await response.json();
+    return data.data || [];
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    throw error;
+  }
+}
+
+
+export async function fetchActiveCategories() {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await fetch(`${BASE_URL}/categories-active`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch active categories');
+    }
+
+    const data = await response.json();
+    return data.data || [];
+  } catch (error) {
+    console.error('Error fetching active categories:', error);
+    throw error;
+  }
+}
+
+
+export async function createCategory(categoryData: FormData, token: string | null) {
+  try {
+    const response = await fetch(`${BASE_URL}/categories`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        // Don't set Content-Type for FormData, let the browser set it
+      },
+      body: categoryData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to create category');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error creating category:', error);
+    throw error;
+  }
+}
+
+
+export async function updateCategory(id: number, categoryData: FormData, token: string | null) {
+  try {
+
+    categoryData.append('_method', 'PUT');
+    
+    const response = await fetch(`${BASE_URL}/categories/${id}`, {
+      method: 'POST', 
+      headers: {
+        'Authorization': `Bearer ${token}`,
+
+      },
+      body: categoryData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to update category');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error updating category:', error);
+    throw error;
+  }
+}
+
+
+export async function deleteCategory(id: number, token: string | null) {
+  try {
+    const response = await fetch(`${BASE_URL}/categories/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to delete category');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    throw error;
+  }
+}
+
+
+export async function fetchCategory(id: number) {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await fetch(`${BASE_URL}/categories/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch category');
+    }
+
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error('Error fetching category:', error);
+    throw error;
+  }
+}

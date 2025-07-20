@@ -32,6 +32,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { url } from "inspector"
 
 const data = {
   user: {
@@ -50,6 +51,12 @@ const data = {
       url: "/dashboard-full/customer",
       icon: IconCamera,
     },
+
+    {
+    title: "Kategori", 
+    icon: "category-icon", 
+    url: "dashboard-full/kategori",  
+  },
     
     {
       title: "Barang",
