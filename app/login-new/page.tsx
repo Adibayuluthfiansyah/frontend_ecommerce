@@ -15,7 +15,7 @@ export default function LoginPage() {
           <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
             <GalleryVerticalEnd className="size-4" />
           </div>
-          PT Biawak Tbk
+          PT ANGIN RIBUT
         </a>
         <LoginForm />
       </div>
