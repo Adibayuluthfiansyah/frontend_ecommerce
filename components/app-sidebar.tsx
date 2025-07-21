@@ -60,7 +60,7 @@ const data = {
   },
     
     {
-      title: "Barang",
+      title: "Produk",
       url: "/dashboard-full/barang",
       icon: IconFolder,
     },
