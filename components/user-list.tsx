@@ -106,14 +106,14 @@ export default function UserTable() {
                   user={user}
                   onSubmit={handleUpdate}
                   trigger={
-                    <Button size="sm" variant="outline" className="bg-sky-400">
+                    <Button size="sm" variant="outline" className="bg-sky-400 cursor-pointer">
                       Edit
                     </Button>
                   }
                 />
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive" size="sm">
+                    <Button variant="destructive" size="sm" className="cursor-pointer hover:bg-destructive/50">
                       Hapus
                     </Button>
                   </AlertDialogTrigger>

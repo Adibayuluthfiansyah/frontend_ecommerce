@@ -85,7 +85,7 @@ const formatRupiah = (angka: number) =>
   return (
     <div className="rounded-md border p-4 space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Daftar User</h2>
+        <h2 className="text-xl font-semibold">Daftar Produk</h2>
         <BarangFormModal
           onSubmit={handleCreate}
           trigger={<Button>+ Tambah</Button>}
@@ -95,9 +95,9 @@ const formatRupiah = (angka: number) =>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[50px]">#</TableHead>
-            <TableHead>Nama Barang</TableHead>
-            <TableHead>Jumlah Barang</TableHead>
-            <TableHead>Harga Barang</TableHead>
+            <TableHead>Nama Produk</TableHead>
+            <TableHead>Jumlah Produk</TableHead>
+            <TableHead>Harga Produk</TableHead>
             <TableHead className="text-right">Aksi</TableHead>
           </TableRow>
         </TableHeader>
