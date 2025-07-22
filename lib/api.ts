@@ -42,6 +42,7 @@ export async function createUser(data: {
   name: string;
   email: string;
   password: string;
+  username: string; 
 }) {
   const res = await fetch(`${BASE_URL}/user`, {
     method: "POST",
