@@ -39,7 +39,7 @@ export function SectionCards() {
     <div className="grid grid-cols-1 gap-4 px-4 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Total Pengguna</CardDescription>
+          <CardDescription>Total User</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             {counts.users}
           </CardTitle>
