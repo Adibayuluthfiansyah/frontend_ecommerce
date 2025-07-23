@@ -32,7 +32,6 @@ export function CategorySection() {
       setLoading(true);
       setError(null);
       const data = await fetchCategories();
-      // Ambil hanya 6 kategori pertama untuk dashboard
       setCategories(data.slice(0, 6));
     } catch (error: any) {
       console.error('Error loading categories:', error);
