@@ -88,7 +88,7 @@ const formatRupiah = (angka: number) =>
         <h2 className="text-xl font-semibold">Daftar Produk</h2>
         <BarangFormModal
           onSubmit={handleCreate}
-          trigger={<Button>+ Tambah</Button>}
+          trigger={<Button className="cursor-pointer">+ Tambah</Button>}
         />
       </div>
       <Table>
@@ -113,14 +113,14 @@ const formatRupiah = (angka: number) =>
                   barang={barang}
                   onSubmit={handleUpdate}
                   trigger={
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" variant="outline" className="cursor-pointer">
                       Edit
                     </Button>
                   }
                 />
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive" size="sm">
+                    <Button variant="destructive" size="sm" className="cursor-pointer hover:bg-destructive/70">
                       Hapus
                     </Button>
                   </AlertDialogTrigger>

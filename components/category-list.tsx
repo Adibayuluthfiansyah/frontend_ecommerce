@@ -65,7 +65,7 @@ export default function CategoryList() {
     const token = localStorage.getItem("token");
     try {
       await deleteCategory(id, token);
-      await loadCategories(); // Reload data
+      await loadCategories(); 
       toast.success("Category berhasil dihapus");
     } catch (err: any) {
       console.error('Delete error:', err);
@@ -78,14 +78,13 @@ export default function CategoryList() {
       const id = Number(formData.get('id'));
       if (!id) throw new Error('ID kategori tidak ditemukan');
       
-      // Debug: log FormData contents
       console.log('Update FormData:');
       for (let [key, value] of formData.entries()) {
         console.log(`${key}:`, value);
       }
       
       await updateCategory(id, formData);
-      await loadCategories(); // Reload data
+      await loadCategories(); 
       toast.success("Category berhasil diupdate");
     } catch (err: any) {
       console.error('Update error:', err);
@@ -95,14 +94,14 @@ export default function CategoryList() {
 
   const handleCreate = async (formData: FormData) => {
     try {
-      // Debug: log FormData contents
+
       console.log('Create FormData:');
       for (let [key, value] of formData.entries()) {
         console.log(`${key}:`, value);
       }
       
       await createCategory(formData);
-      await loadCategories(); // Reload data
+      await loadCategories(); 
       toast.success("Category berhasil ditambahkan");
     } catch (err: any) {
       console.error('Create error:', err);
@@ -110,7 +109,7 @@ export default function CategoryList() {
     }
   };
 
-  // Loading state
+
   if (loading && categories.length === 0) {
     return (
       <div className="rounded-md border p-4">
@@ -122,7 +121,6 @@ export default function CategoryList() {
     );
   }
 
-  // Error state
   if (error && categories.length === 0) {
     return (
       <div className="rounded-md border p-4">
@@ -142,11 +140,10 @@ export default function CategoryList() {
         <h2 className="text-xl font-semibold">Daftar Category</h2>
         <CategoryFormModal
           onSubmit={handleCreate}
-          trigger={<Button>+ Tambah</Button>}
+          trigger={<Button className="cursor-pointer">+ Tambah</Button>}
         />
       </div>
       
-      {/* Loading overlay saat reload */}
       {loading && categories.length > 0 && (
         <div className="flex justify-center py-2">
           <p className="text-sm text-muted-foreground">Memuat ulang...</p>
@@ -210,14 +207,14 @@ export default function CategoryList() {
                     category={category}
                     onSubmit={handleUpdate}
                     trigger={
-                      <Button size="sm" variant="outline">
+                      <Button size="sm" variant="outline" className="cursor-pointer">
                         Edit
                       </Button>
                     }
                   />
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="destructive" size="sm">
+                      <Button variant="destructive" size="sm" className="cursor-pointer hover:bg-destructive/70">
                         Hapus
                       </Button>
                     </AlertDialogTrigger>

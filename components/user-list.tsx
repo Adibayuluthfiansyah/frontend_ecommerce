@@ -81,7 +81,7 @@ export default function UserTable() {
         <h2 className="text-xl font-semibold">Daftar User</h2>
         <UserFormModal
           onSubmit={handleCreate}
-          trigger={<Button>+ Tambah</Button>}
+          trigger={<Button className="cursor-pointer">+ Tambah</Button>}
         />
       </div>
       <Table>

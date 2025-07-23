@@ -99,7 +99,7 @@ export default function DaftarOrder() {
                 <TableCell className="text-right">
                   <OrderDetailsModal
                     orderId={order.id}
-                    trigger={<Button variant="secondary">Lihat Barang</Button>}
+                    trigger={<Button variant="secondary" className="cursor-pointer">Lihat Barang</Button>}
                   />
                 </TableCell>
               </TableRow>

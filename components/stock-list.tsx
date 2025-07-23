@@ -99,7 +99,7 @@ export default function StockList() {
         <h2 className="text-xl font-semibold">Daftar Stock</h2>
         <StockFormModal
           onSubmit={handleCreate}
-          trigger={<Button>+ Tambah</Button>}
+          trigger={<Button className="cursor-pointer">+ Tambah</Button>}
         />
       </div>
       <Table>
@@ -138,14 +138,14 @@ export default function StockList() {
                   stock={stock}
                   onSubmit={handleUpdate}
                   trigger={
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" variant="outline" className="cursor-pointer">
                       Edit
                     </Button>
                   }
                 />
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive" size="sm">
+                    <Button variant="destructive" size="sm" className="cursor-pointer hover:bg-destructive/70">
                       Hapus
                     </Button>
                   </AlertDialogTrigger>
