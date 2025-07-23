@@ -439,7 +439,6 @@ export async function registerUser(data: {
 }
 
 // categori
-// Update category - Perbaikan utama
 export const updateCategory = async (id: number, formData: FormData) => {
   try {
     const token = getToken();

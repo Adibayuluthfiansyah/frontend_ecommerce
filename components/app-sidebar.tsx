@@ -65,12 +65,12 @@ const data = {
       icon: IconFolder,
     },
     {
-      title: "Persediaan",
+      title: "Stock",
       url: "/dashboard-full/stock",
       icon: IconReport,
     },
     {
-      title: "Pemesanan",
+      title: "Order Detail",
       url: "/dashboard-full/order",
       icon: IconChartBar,
     },
